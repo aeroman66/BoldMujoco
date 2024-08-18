@@ -1,0 +1,240 @@
+<mujoco model="SkiDog">
+  <compiler angle="radian" autolimits="true"/>
+  <size njmax="500" nconmax="1000"/>
+  <option timestep="0.002" iterations="50" tolerance="1e-10" solver="Newton" jacobian="dense" cone="elliptic" gravity="0 0 0" />
+  <!-- gravity 1 0 -5 -->
+
+  <default>
+    <joint ref="0" armature="0.02"/>
+    <geom condim="3" material="matgeom"/>
+    <motor ctrlrange="-1.0 1.0" ctrllimited="true"/>
+  </default>
+
+  <visual>
+    <map force="0.1" zfar="30"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <quality shadowsize="2048"/>
+    <global offwidth="800" offheight="800"/>
+  </visual>
+
+  <asset>
+    <mesh name="base" file="meshes/base2.STL"/>
+    <mesh name="thigh" file="meshes/thigh.STL"/>
+    <mesh name="thigh_r" file="meshes/thigh_right.STL"/>
+    <mesh name="foot" file="meshes/foot.STL"/>
+    <mesh name="midfoot" file="meshes/mdfoot.STL"/>
+    <mesh name="THIGH_1" file="meshes/THIGH_1.STL"/>
+    <mesh name="kuan" file="meshes/kuan.STL"/>
+    <mesh name="jiao" file="meshes/jiaojie.STL"/>
+    <mesh name="leg" file="meshes/leg.STL"/>
+    <mesh name="skiboard" file="meshes/skiboard.STL"/>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512" />
+    <!--    <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512" mark="cross" markrgb=".8 .8 .8" />-->
+    <texture name="texplane" type="2d" builtin="checker" rgb1="1 1 1 " rgb2="1 1 1 " width="512" height="512" mark="cross" markrgb=".8 .8 .8" />
+    <texture name="texgeom" type="cube" builtin="flat" mark="cross" width="127" height="1278" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" markrgb="1 1 1" random="0.01"/>
+    <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="1 1" texuniform="true" rgba="0.5 0.5 0.5 1"/>
+    <material name="matgeom" texture="texgeom" texuniform="true" rgba="0.8 0.6 .4 1"/>
+
+  </asset>
+
+  <worldbody>
+    <geom name="floor" pos="0 0 0" size="0 0 0.25" type="plane" friction="1 0.005 0.0001" material="matplane" rgba="1 1 1 0.5" condim="1"/>
+    <light directional="true" diffuse=".4 .4 .4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false" />
+    <light directional="true" diffuse=".6 .6 .6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1" />
+    
+
+    <body name="base" pos="0 0 0.55" euler="3.14 0 3.14">
+      <geom name="base" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="base"/>
+      <joint name="float_base" type="free" stiffness="0" damping="0" frictionloss="0" armature="0"/>
+
+      <body name="hip_lf" pos="-0.408 0.0656 -0.053" euler="0 0 -1.57">
+        <geom name="hip_lf" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="kuan" euler="-0.3408 0 0"/>
+        <joint name="j_hip_lf" type="hinge" pos="-0.05979 0.058 0" axis="0 1 0" range="-3.14 3.14"/>
+        <body name="thigh_lf" pos="-0.11000000 0 0" euler="0 -1.57  -1.65001">
+          <joint name="j_thigh_lf" type="hinge" pos=" 0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+          <geom name="thigh_lf" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="thigh_r" euler="-0 0 0"/>
+          <body name="shank_lf" pos="0.18403318 0.21102585 0.03049800 " euler="-0 3.14 2.24 ">
+            <geom name="shank_lf" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="foot" euler="-0 0 0"/>
+            <joint name="j_shank_lf" type="hinge" pos="0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+            <body name="hinge_lf" pos="-0.01 -0.29 0 " euler="-0 0 2.35 ">
+              <geom name="hinge_lf" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="jiao" euler="-1.57 0 0"/>
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <body name="hip_lm" pos="-0.002 0.2206 -0.053" euler="3.14 0 1.57">
+        <geom name="hip_lm" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="kuan" euler="-0.3408 0 0"/>
+        <joint name="j_hip_lm" type="hinge" pos="-0.05979 0.058 0" axis="0 1 0" range="-3.14 3.14"/>
+        <body name="thigh_lm" pos="-0.11000000 0 0" euler="0 -1.57 1.13499 ">
+          <joint name="j_thigh_lm" type="hinge" pos=" 0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+          <geom name="thigh_lm" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="thigh_r" euler="-0 0 0"/>
+          <body name="shank_lm" pos="0.18403318 0.21102585 0.03049800 " euler="-0 3.14 1.5 ">
+            <geom name="shank_lm" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="midfoot" euler="-0 0 0" condim="1"/>
+            <joint name="j_shank_lm" type="hinge" pos="0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+          </body>
+        </body>
+      </body>
+
+      <body name="hip_lb" pos="0.408 0.0656 -0.053" euler="0 3.14 -1.57">
+        <geom name="hip_lb" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="kuan" euler="-0.3408 0 0"/>
+        <joint name="j_hip_lb" type="hinge" pos="-0.05979 0.058 0" axis="0 1 0" range="-3.14 3.14"/>
+        <body name="thigh_lb" pos="-0.11000000 0 0" euler="0 -1.57 1.39215 ">
+          <joint name="j_thigh_lb" type="hinge" pos=" 0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+          <geom name="thigh_lb" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="thigh_r" euler="-0 0 0"/>
+          <body name="shank_lb" pos="0.18403318 0.21102585 0.03049800 " euler="-0 3.14 2.19 ">
+            <geom name="shank_lb" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="foot" euler="-0 0 0"/>
+            <joint name="j_shank_lb" type="hinge" pos="0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+            <body name="board_lb" pos="0.344 -0.028 0 " euler="0 0 2.355 ">
+              <geom name="board_lb" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="skiboard" euler="-0 -1.57 0" condim="1"/>
+              <site name="site1" pos="0 0 0" />
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <body name="hip_rb" pos="0.408 -0.0656 -0.053" euler="0 0 1.57">
+        <geom name="hip_rb" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="kuan" euler="-0.3408 0 0"/>
+        <joint name="j_hip_rb" type="hinge" pos="-0.05979 0.058 0" axis="0 1 0" range="-3.14 3.14"/>
+        <body name="thigh_rb" pos="-0.11000000 0 0" euler="-0 1.57 -2.84284 ">
+          <joint name="j_thigh_rb" type="hinge" pos="0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+          <geom name="thigh_rb" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="THIGH_1" euler="-0 0 0"/>
+          <body name="shank_rb" pos="0.10341258 -0.26020345 -0.03050000 " euler="-0 3.14 -2.0425 ">
+            <geom name="shank_rb" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="foot" euler="-0 0 0"/>
+            <joint name="j_shank_rb" type="hinge" pos="0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+            <body name="board_rb" pos="0.344 -0.028 0 " euler="0 0 2.355 ">
+              <geom name="board_rb" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="skiboard" euler="-0 -1.57 0" condim="1"/>
+              <site name="site2" pos="0 0 0" />
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <body name="hip_rm" pos="-0.002 -0.2206 -0.053" euler="0 0 1.57">
+        <geom name="hip_rm" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="kuan" euler="-0.3408 0 0"/>
+        <joint name="j_hip_rm" type="hinge" pos="-0.05979 0.058 0" axis="0 1 0" range="-3.14 3.14"/>
+        <body name="thigh_rm" pos="-0.11000000 0 0" euler="-0 1.57 -3.1 ">
+          <joint name="j_thigh_rm" type="hinge" pos="0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+          <geom name="thigh_rm" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="THIGH_1" euler="-0 0 0"/>
+          <body name="shank_rm" pos="0.10341258 -0.26020345 -0.03050000 " euler="-0 3.14 -2.73 ">
+            <geom name="shank_rm" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="midfoot" euler="-0 0 0" condim="1"/>
+            <joint name="j_shank_rm" type="hinge" pos="0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+          </body>
+        </body>
+      </body>
+
+      <body name="hip_rf" pos="-0.408 -0.0656 -0.053" euler="0 3.14 1.57">
+        <geom name="hip_rf" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="kuan" euler="-0.3408 0 0"/>
+        <joint name="j_hip_rf" type="hinge" pos="-0.05979 0.058 0" axis="0 1 0" range="-3.14 3.14"/>
+        <body name="thigh_rf" pos="-0.11000000 0 0" euler="-0 1.57 0.4 ">
+          <joint name="j_thigh_rf" type="hinge" pos="0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+          <geom name="thigh_rf" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="THIGH_1" euler="-0 0 0"/>
+          <body name="shank_rf" pos="0.10341258 -0.26020345 -0.03050000 " euler="-0 3.14 -2 ">
+            <geom name="shank_rf" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="foot" euler="-0 0 0"/>
+            <joint name="j_shank_rf" type="hinge" pos="0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+            <body name="hinge_rf" pos="-0.01 -0.29 0 " euler="-0 0 2.355 ">
+              <geom name="hinge_rf" type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="jiao" euler="-1.57 0 0"/>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <body name="origin" pos="0 0 0">
+    </body>
+
+  </worldbody>
+
+  <!--  并联-->
+  <equality>
+    <weld name="ski_l" body1="hinge_lf" body2="board_lb" torquescale="10" anchor="0.02841271 -0.34973950 0 " solref="-50000 -100"/>
+    <weld name="ski_r" body1="hinge_rf" body2="board_rb" torquescale="10" anchor="0.02841271 -0.34973950 0 " solref="-50000 -100"/>
+  </equality>
+
+  <!-- 接触消除 -->
+  <contact>
+    <exclude name="b_thigh_lb" body1="base" body2="thigh_lb"/>
+    <exclude name="b_thigh_lf" body1="base" body2="thigh_lf"/>
+    <exclude name="b_thigh_rb" body1="base" body2="thigh_rb"/>
+    <exclude name="b_thigh_rf" body1="base" body2="thigh_rf"/>
+    <exclude name="board_rm_hinge_rf" body1="board_rb" body2="hinge_rf"/>
+    <exclude name="board_rm_shank_rf" body1="board_rb" body2="shank_rf"/>
+    <exclude name="board_rm_hip_rb" body1="board_rb" body2="hip_rb"/>
+    <exclude name="board_lm_hip_lb" body1="board_lb" body2="hip_lb"/>
+    <exclude name="board_lm_hinge_lf" body1="board_lb" body2="hinge_lf"/>
+    <exclude name="board_lm_shank_lf" body1="board_lb" body2="shank_lf"/>
+  </contact>
+
+  <actuator>
+    <motor joint="j_hip_lf" name="m_hip_lf" gear="200"/>
+    <motor joint="j_thigh_lf" name="m_thigh_lf" gear="200"/>
+    <motor joint="j_shank_lf" name="m_shank_lf" gear="200"/>
+
+    <motor joint="j_hip_lm" name="m_hip_lm" gear="200"/>
+    <motor joint="j_thigh_lm" name="m_thigh_lm" gear="200"/>
+    <motor joint="j_shank_lm" name="m_shank_lm" gear="200"/>
+
+    <motor joint="j_hip_lb" name="m_hip_lb" gear="200"/>
+    <motor joint="j_thigh_lb" name="m_thigh_lb" gear="200"/>
+    <motor joint="j_shank_lb" name="m_shank_lb" gear="200"/>
+
+    <motor joint="j_hip_rb" name="m_hip_rb" gear="200"/>
+    <motor joint="j_thigh_rb" name="m_thigh_rb" gear="200"/>
+    <motor joint="j_shank_rb" name="m_shank_rb" gear="200"/>
+
+    <motor joint="j_hip_rm" name="m_hip_rm" gear="200"/>
+    <motor joint="j_thigh_rm" name="m_thigh_rm" gear="200"/>
+    <motor joint="j_shank_rm" name="m_shank_rm" gear="200"/>
+
+    <motor joint="j_hip_rf" name="m_hip_rf" gear="200"/>
+    <motor joint="j_thigh_rf" name="m_thigh_rf" gear="200"/>
+    <motor joint="j_shank_rf" name="m_shank_rf" gear="200"/>
+
+<!--  <position name="rx_hip_lf" joint="j_hip_lf" kp="200" />-->
+<!--  <velocity name="rxv_hip_lf" joint="j_hip_lf" kv="10" />-->
+<!--  <position name="rx_hip_lm" joint="j_hip_lm" kp="200" />-->
+<!--  <velocity name="rxv_hip_lm" joint="j_hip_lm" kv="10" />-->
+<!--  <position name="rx_hip_lb" joint="j_hip_lb" kp="200" />-->
+<!--  <velocity name="rxv_hip_lb" joint="j_hip_lb" kv="10" />-->
+<!--  <position name="rx_hip_rb" joint="j_hip_rb" kp="200" />-->
+<!--  <velocity name="rxv_hip_rb" joint="j_hip_rb" kv="10" />-->
+<!--  <position name="rx_hip_rm" joint="j_hip_rm" kp="200" />-->
+<!--  <velocity name="rxv_hip_rm" joint="j_hip_rm" kv="10" />-->
+<!--  <position name="rx_hip_rf" joint="j_hip_rf" kp="200" />-->
+<!--  <velocity name="rxv_hip_rf" joint="j_hip_rf" kv="10" />-->
+<!--    -->
+<!--  <position name="rx_thigh_lf" joint="j_thigh_lf" kp="200" />-->
+<!--  <velocity name="rxv_thigh_lf" joint="j_thigh_lf" kv="10" />-->
+<!--  <position name="rx_thigh_lm" joint="j_thigh_lm" kp="200" />-->
+<!--  <velocity name="rxv_thigh_lm" joint="j_thigh_lm" kv="10" />-->
+<!--  <position name="rx_thigh_lb" joint="j_thigh_lb" kp="200" />-->
+<!--  <velocity name="rxv_thigh_lb" joint="j_thigh_lb" kv="10" />-->
+<!--  <position name="rx_thigh_rb" joint="j_thigh_rb" kp="200" />-->
+<!--  <velocity name="rxv_thigh_rb" joint="j_thigh_rb" kv="10" />-->
+<!--  <position name="rx_thigh_rm" joint="j_thigh_rm" kp="200" />-->
+<!--  <velocity name="rxv_thigh_rm" joint="j_thigh_rm" kv="10" />-->
+<!--  <position name="rx_thigh_rf" joint="j_thigh_rf" kp="200" />-->
+<!--  <velocity name="rxv_thigh_rf" joint="j_thigh_rf" kv="10" />-->
+<!--  -->
+<!--  <position name="rx_shank_lf" joint="j_shank_lf" kp="200" />-->
+<!--  <velocity name="rxv_shank_lf" joint="j_shank_lf" kv="10" />-->
+<!--  <position name="rx_shank_lm" joint="j_shank_lm" kp="200" />-->
+<!--  <velocity name="rxv_shank_lm" joint="j_shank_lm" kv="10" />-->
+<!--  <position name="rx_shank_lb" joint="j_shank_lb" kp="200" />-->
+<!--  <velocity name="rxv_shank_lb" joint="j_shank_lb" kv="10" />-->
+<!--  <position name="rx_shank_rb" joint="j_shank_rb" kp="200" />-->
+<!--  <velocity name="rxv_shank_rb" joint="j_shank_rb" kv="10" />-->
+<!--  <position name="rx_shank_rm" joint="j_shank_rm" kp="200" />-->
+<!--  <velocity name="rxv_shank_rm" joint="j_shank_rm" kv="10" />-->
+<!--  <position name="rx_shank_rf" joint="j_shank_rf" kp="200" />-->
+<!--  <velocity name="rxv_shank_rf" joint="j_shank_rf" kv="10" />-->
+  </actuator>
+
+  <sensor>
+    <framequat objtype="site" objname="site1" />
+    <framequat objtype="site" objname="site2" />
+    <framelinvel objtype="site" objname="site1" />
+    <framelinvel objtype="site" objname="site2" />
+  </sensor>
+
+</mujoco>
