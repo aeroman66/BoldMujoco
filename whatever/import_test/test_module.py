@@ -1,5 +1,5 @@
 def haha():
-    print("haha")
+    print("haha") # 但是问题是这个脚本并没有被执行
 
 print(__name__)
 
