@@ -1,4 +1,5 @@
 # 在这里定义所有 rl 训练过程中的超参
+# 还有待修改，mujoco 中所需的参数与 isaac 中并不一样
 
 from .base_config import BaseConfig
 
@@ -49,6 +50,8 @@ class LeggedRobotCfg(BaseConfig):
             ang_vel_yaw = [-1, 1]    # min max [rad/s]
             heading = [-3.14, 3.14]  # 疑问：heading mode 是什么
 
+    # 这里的初始位置应该只影响后续的计算，而并不会影响模型本身
+    # 模型本身的数据是由 xml 文件决定的
     class init_state:
         pos = [0.0, 0.0, 1.]         # x,y,z [m]
         rot = [0.0, 0.0, 0.0, 1.0]   # x,y,z,w [quat]
@@ -67,11 +70,13 @@ class LeggedRobotCfg(BaseConfig):
         action_scale = 0.5
         # decimation: Number of control action updates @ sim DT per policy DT # 疑问：通俗的来说是不是与控制频率挂钩，这个数越大代表你的控制频率越低
         decimation = 4
+        kp = 0.6
+        kv = 0.08
 
     class asset:                             # 疑问：感觉这里面的很多都需要解释
-        file = ""
+        xml_path = ""
         name = "legged_robot"                # actor name
-        foot_name = "None"                   # name of the feet bodies, used to index body state and contact force tensors
+        body_name = []                   # name of the feet bodies, used to index body state and contact force tensors
         penalize_contacts_on = []
         terminate_after_contacts_on = []
         disable_gravity = False
@@ -158,6 +163,9 @@ class LeggedRobotCfg(BaseConfig):
         substeps = 1
         gravity = [0., 0. ,-9.81]  # [m/s^2]
         up_axis = 1  # 0 is y, 1 is z
+        frame_skip = 1 # 疑问：mujoco 中专属，不知道有什么用
+        pause = False
+        overlay = {}
 
         class physx:
             num_threads = 10
