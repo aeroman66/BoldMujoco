@@ -4,4 +4,7 @@
 from ..base.mujoco_env import MujocoEnv
 
 class WalkEnv(MujocoEnv):
-    
+    def __init__(self, cfg=None) -> None:
+        super().__init__(cfg)
+
+        self.cfg = cfg
