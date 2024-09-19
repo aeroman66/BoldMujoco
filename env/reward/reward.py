@@ -3,6 +3,7 @@ import torch
 
 class Reward:
     def __init__(self) -> None:
+        # 这里的参数定义方式还需要修改
         tracking_sigma_lin_vel = 0.25
         tracking_sigma_ang_vel = 0.25
         reference_height = 0.34
@@ -29,21 +30,21 @@ class Reward:
         self._reward_joint_vel_coef = reward_joint_vel_coef
         self.pos_threshold = pos_threshold
 
-    def _reward_track_lin_vel(self):
+    def _reward_tracking_lin_vel(self):
         command = self.command
-        lin_vel_error = np.sum(np.square(self.base_lin_vel[:2] - command[:2]))
+        lin_vel_error = np.sum(np.square(self.base_lin_vel_b[:2] - command[:2]))
         return np.exp(-lin_vel_error / self.tracking_sigma_lin_vel)
     
-    def _reward_track_ang_vel(self):
+    def _reward_tracking_ang_vel(self):
         command = self.command
-        ang_vel_error = np.sum(np.square(self.base_ang_vel[:2] - command[:2]))
+        ang_vel_error = np.sum(np.square(self.base_ang_vel_b[:2] - command[:2]))
         return np.exp(-ang_vel_error / self.tracking_sigma_ang_vel)
     
     def _reward_lin_vel_z(self):
         return np.square(self._qvel[2])
     
     def _reward_ang_vel_xy(self):
-        return np.sum(np.square(self._nase_ang_vel[:2]))
+        return np.sum(np.square(self._base_ang_vel_b[:2]))
     
     def _reward_orientation(self):
         gravity = [0., 0., -1.0]

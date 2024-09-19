@@ -22,6 +22,22 @@ class Go1Cfg(LeggedRobotCfg):
             'FR_calf_joint': -1.5,  # [rad]
             'RR_calf_joint': -1.5,    # [rad]
         }
+    
+    class dof_pos_limits(LeggedRobotCfg.dof_pos_limits):
+        dof_pos_limits = [
+            [-0.7226, 0.7226],  # hip_joint
+            [-0.7854, 3.9270],  # thigh_joint
+            [-2.6075, -1.0053], # calf_joint
+            [-0.7226, 0.7226],
+            [-0.7854, 3.9270],
+            [-2.6075, -1.0053],
+            [-0.7226, 0.7226],
+            [-0.7854, 3.9270],
+            [-2.6075, -1.0053],
+            [-0.7226, 0.7226],
+            [-0.7854, 3.9270],
+            [-2.6075, -1.0053]
+        ]
 
     class asset(LeggedRobotCfg.asset):
         xml_path = '{LEGGED_GYM_ROOT_DIR}/resources/robots/a1/urdf/a1.urdf'

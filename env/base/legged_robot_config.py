@@ -12,6 +12,7 @@ class LeggedRobotCfg(BaseConfig):
         env_spacing = 3.             # not used with heightfields/trimeshes  疑问：这个参数是干什么用的
         send_timeouts = True         # send time out information to the algorithm
         episode_length_s = 20        # episode length in seconds
+        num_history_obs = 10
 
     class terrain:
         curriculum = True
@@ -61,13 +62,16 @@ class LeggedRobotCfg(BaseConfig):
             "joint_a": 0., 
             "joint_b": 0.}
         
+    class dof_pos_limits:
+        dof_pos_limits = [[0., 0.] for i in range(12)]
+        
     class control:
         control_type = 'P'           # P: position, V: velocity, T: torques
         # PD Drive parameters:
         stiffness = {'joint_a': 10.0, 'joint_b': 15.}  # [N*m/rad]
         damping = {'joint_a': 1.0, 'joint_b': 1.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
-        action_scale = 0.5
+        action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT # 疑问：通俗的来说是不是与控制频率挂钩，这个数越大代表你的控制频率越低
         decimation = 4
         kp = 0.6
@@ -137,6 +141,7 @@ class LeggedRobotCfg(BaseConfig):
             dof_pos = 1.0
             dof_vel = 0.05
             height_measurements = 5.0
+            command = [lin_vel, lin_vel, ang_vel]
         clip_observations = 100.
         clip_actions = 100.
 

@@ -9,10 +9,11 @@ class BaseConfig:
     def __init__(self) -> None:
         """
         Initializes all member classes recursively. Ignores all names starting with '__' (built-in methods).
+        因为子类中没有定义 __init__ 函数，所以初始化子类时自动调用的是这个函数
         """
         self.init_member_classes(self)
 
-    @staticmethod # 这个装饰器的功能还不是很懂
+    @staticmethod # 这个装饰器，让定义的函数不再是一个类方法，而更接近于一个普通函数
     def init_member_classes(obj):
         # iterate over all classes' names
         for key in dir(obj):
