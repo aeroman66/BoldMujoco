@@ -4,16 +4,16 @@
 
 # from legged_robot_config import LeggedRobotCfg # 这里不一定需要传入这个配置，可以随机器人型号而定
 import mujoco as mj
-import mujoco.glfw as glfw
+from mujoco.glfw import glfw
 import numpy as np # 因为 mujoco 应该不支持 GPU 计算，所以这里大多用的是 numpy 库
 import os
 
 class MujocoEnv(): # 疑问：这里写上的括号有任何作用吗
     def __init__(self, cfg) -> None: # cfg 的具体传入类型由机器人型号决定
-        self.frame_skip = cfg.sim.frame_skip
         self.xml_path = cfg.asset.xml_path
         self.body_name = cfg.asset.body_name
         self.overlay = cfg.sim.overlay
+        self.decimation = cfg.control.decimation
 
         # mujoco data structure
         self.model = mj.MjModel.from_xml_path(self.xml_path)
@@ -23,6 +23,7 @@ class MujocoEnv(): # 疑问：这里写上的括号有任何作用吗
 
         self.init_qpos = np.array(self.data.qpos)
         self.init_qvel = np.array(self.data.qvel)
+        self.pause = False
 
         # For callback functions 都是为了仿真 UI 服务的
         self.button_left = False
@@ -40,7 +41,7 @@ class MujocoEnv(): # 疑问：这里写上的括号有任何作用吗
         有了这个装饰器，我调用 dt 的时候可以直接向我返回这个 return 结果，就像一个属性一样
         有时我们这么做是因为我们希望对 原数值进行一些计算再返回
         """
-        return self.model.opt.timestep * self.frame_skip
+        return self.model.opt.timestep * self.decimation
 
     # 都是为 mujoco UI 编写的函数
     def do_simulation(self, ctrl, n_frames, actuator_index=None):
@@ -225,7 +226,7 @@ class MujocoEnv(): # 疑问：这里写上的括号有任何作用吗
         从 mujoco 模型中获取了各种关于动作命令的信息
         并将其存储与一个字典中
         """
-        bounds = self.model.acactuator_ctrlrange.copy().astype(np.float32)
+        bounds = self.model.actuator_ctrlrange.copy().astype(np.float32)
         self.action_space = {}
         self.action_space["bounds"] = bounds
         self.action_space["action_num"] = bounds.shape[0]

@@ -24,7 +24,7 @@ class LeggedRobotCfg(BaseConfig):
         dynamic_friction = 1.0
         restitution = 0.
         # rough terrain only:
-        measure_heights = True
+        measure_heights = False
         measured_points_x = [-0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8] # 1m x 1.6m rectangle (without center line) # 疑问：这个点是干什么用的
         measured_points_y = [-0.5, -0.4, -0.3, -0.2, -0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5]
         selected = False             # select a unique terrain type and pass all arguments
@@ -64,6 +64,9 @@ class LeggedRobotCfg(BaseConfig):
         
     class dof_pos_limits:
         dof_pos_limits = [[0., 0.] for i in range(12)]
+
+    class default_dof_pos:
+        default_dof_pos = [0.0 for i in range(12)]
         
     class control:
         control_type = 'P'           # P: position, V: velocity, T: torques
@@ -104,7 +107,7 @@ class LeggedRobotCfg(BaseConfig):
         friction_range = [0.5, 1.25]
         randomize_base_mass = False
         added_mass_range = [-1., 1.]
-        push_robots = True
+        push_robots = False
         push_interval_s = 15
         max_push_vel_xy = 1.
 
@@ -120,7 +123,7 @@ class LeggedRobotCfg(BaseConfig):
             dof_vel = -0.
             dof_acc = -2.5e-7
             base_height = -0. 
-            feet_air_time =  1.0
+            feet_air_time =  .0
             collision = -1.
             feet_stumble = -0.0 
             action_rate = -0.01
@@ -144,6 +147,7 @@ class LeggedRobotCfg(BaseConfig):
             command = [lin_vel, lin_vel, ang_vel]
         clip_observations = 100.
         clip_actions = 100.
+        clip_torques = 6.
 
     class noise:
         add_noise = True
@@ -168,7 +172,6 @@ class LeggedRobotCfg(BaseConfig):
         substeps = 1
         gravity = [0., 0. ,-9.81]  # [m/s^2]
         up_axis = 1  # 0 is y, 1 is z
-        frame_skip = 1 # 疑问：mujoco 中专属，不知道有什么用
         pause = False
         overlay = {}
 

@@ -1,7 +1,13 @@
 # 有一些需要覆盖的超参就在这里进行调整
 # 同时由于是具体的机器人配置文件，所以机器人的模型路径也就设置在这里
+import os
+import sys
+current_script_path = os.path.abspath(__file__)
+current_script_dir = os.path.dirname(current_script_path)
+parent_dir = os.path.dirname(current_script_dir)
+sys.path.append(parent_dir)
 
-from ..base.legged_robot_config import LeggedRobotCfgPPO, LeggedRobotCfg
+from base import LeggedRobotCfgPPO, LeggedRobotCfg
 
 class Go1Cfg(LeggedRobotCfg):
     class init_state(LeggedRobotCfg.init_state):
@@ -38,9 +44,11 @@ class Go1Cfg(LeggedRobotCfg):
             [-0.7854, 3.9270],
             [-2.6075, -1.0053]
         ]
+    
+    
 
     class asset(LeggedRobotCfg.asset):
-        xml_path = '{LEGGED_GYM_ROOT_DIR}/resources/robots/a1/urdf/a1.urdf'
+        xml_path = "/Users/a123/Downloads/Robo./projectPackage/BoldMujoco/assets/go1/xml/go1.xml"
         body_name = []
 
     class control(LeggedRobotCfg.control):

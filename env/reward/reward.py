@@ -2,43 +2,24 @@ import numpy as np
 import torch
 
 class Reward:
-    def __init__(self) -> None:
-        # 这里的参数定义方式还需要修改
-        tracking_sigma_lin_vel = 0.25
-        tracking_sigma_ang_vel = 0.25
-        reference_height = 0.34
-        body = [4,7,10,13]
-        pen_body = [3,4,7,8,11,12,15,16]  # Right is 5 9  13 17
-        right_body = [5,9,13,17]
-        foot = [13, 22, 32, 42]
-        height_des = 0.45
-        height_threshold = 0.15
-        reward_joint_acc_coef = -0.05
-        reward_joint_vel_coef = -0.5
-        pos_threshold = 0.65
-
-        self.tracking_sigma_lin_vel = tracking_sigma_lin_vel
-        self.tracking_sigma_ang_vel = tracking_sigma_ang_vel
-        self.reference_height = reference_height
-        self.body = body
-        self.pen_body = pen_body
-        self.right_body = right_body
-        self.height_des = height_des
-        self.height_threshold = height_threshold
-        self.foot = foot
-        self._reward_joint_acc_coef = reward_joint_acc_coef
-        self._reward_joint_vel_coef = reward_joint_vel_coef
-        self.pos_threshold = pos_threshold
-
+    # 这里的参数定义方式还需要修改 
+    body = [4,7,10,13]
+    right_body = [5,9,13,17]
+    foot = [13, 22, 32, 42]
+    reward_joint_acc_coef = -0.05
+    reward_joint_vel_coef = -0.5
+    
     def _reward_tracking_lin_vel(self):
+        tracking_sigma_lin_vel = 0.25
         command = self.command
-        lin_vel_error = np.sum(np.square(self.base_lin_vel_b[:2] - command[:2]))
-        return np.exp(-lin_vel_error / self.tracking_sigma_lin_vel)
+        lin_vel_error = np.sum(np.square(self._base_lin_vel_b[:2] - command[:2]))
+        return np.exp(-lin_vel_error / tracking_sigma_lin_vel)
     
     def _reward_tracking_ang_vel(self):
+        tracking_sigma_ang_vel = 0.25
         command = self.command
-        ang_vel_error = np.sum(np.square(self.base_ang_vel_b[:2] - command[:2]))
-        return np.exp(-ang_vel_error / self.tracking_sigma_ang_vel)
+        ang_vel_error = np.sum(np.square(self._base_ang_vel_b[:2] - command[:2]))
+        return np.exp(-ang_vel_error / tracking_sigma_ang_vel)
     
     def _reward_lin_vel_z(self):
         return np.square(self._qvel[2])
@@ -52,8 +33,9 @@ class Reward:
         return np.sum(np.square(gravity_proj[:2]))
     
     def _reward_base_height(self):
+        reference_height = 0.34
         body_height = self._qpos[2]
-        return np.square(body_height - self.reference_height)
+        return np.square(body_height - reference_height)
     
     def _reward_torques(self):
         """注意此处torque只是电机输入
@@ -71,6 +53,7 @@ class Reward:
         return np.sum(np.square(self._last_action - self._action))
     
     def _reward_collision(self):
+        pen_body = [3,4,7,8,11,12,15,16]  # Right is 5 9  13 17
         """go1 penalize with geom, first compute every geoms total contact force
         if thigh and calf contact, both geom yield con_force, both count
         """
@@ -81,9 +64,9 @@ class Reward:
             #       self.data.xpos[self.model.geom_bodyid[self.data.contact[i].geom2]][0], self.data.xpos[self.model.geom_bodyid[self.data.contact[i].geom2]][1],
             #       self.data.xpos[self.model.geom_bodyid[self.data.contact[i].geom2]][2])
             # 分别检查这碰撞中的一对几何体是否在惩罚项中
-            if (self.model.geom_bodyid[self.data.contact[i].geom1] in self.pen_body):
+            if (self.model.geom_bodyid[self.data.contact[i].geom1] in pen_body):
                 wrong_list.append(self.model.geom_bodyid[self.data.contact[i].geom1])
-            if (self.model.geom_bodyid[self.data.contact[i].geom2] in self.pen_body):
+            if (self.model.geom_bodyid[self.data.contact[i].geom2] in pen_body):
                 wrong_list.append(self.model.geom_bodyid[self.data.contact[i].geom2])
             # if (self.data.contact[i].geom1 == 0 and self.data.contact[i].geom2 in ):
             #     wrong_body_num -= 1
@@ -164,12 +147,14 @@ class Reward:
         """奖励机身高度保持在一定范围内
         不是很确定和前面的高度惩罚项的区别在哪里
         """
+        height_des = 0.45
+        height_threshold = 0.15
         height_cur = self._base_pos[2]
-        height_error = np.abs(self.height_des - height_cur)
+        height_error = np.abs(height_des - height_cur)
         
         # 卡在0.3到0.6之间，中点是0.45,门限是0.15,正常是0.35
         height_error_tensor = torch.from_numpy(np.array([height_error]))
-        height_norm_error = torch.relu(torch.abs(height_error_tensor) - self.height_threshold)
+        height_norm_error = torch.relu(torch.abs(height_error_tensor) - height_threshold)
         # print(height_norm_error.item())
         return height_norm_error.item() # 转化为张量是为了进行激活操作，而 item() 只能对单元素张量进行操作
     
@@ -217,10 +202,11 @@ class Reward:
         """惩罚关节角度超过固定阈值范围
         :return: exp(joint_pos - threshold) - 1
         """
+        pos_threshold = 0.65
         joint_hip = np.array([self._joint_pos[0],self._joint_pos[3],self._joint_pos[6],self._joint_pos[9]])
         hip_tensor = torch.from_numpy(joint_hip)
         joint_pos_tensor = torch.from_numpy(self._joint_pos - self.init_qpos[7:])
-        joint_over_range = torch.relu(torch.abs(hip_tensor) - self.pos_threshold)
+        joint_over_range = torch.relu(torch.abs(hip_tensor) - pos_threshold)
         over_range_punish = (torch.exp(joint_over_range) - 1.0).sum()
         # over_range_punish = joint_over_range.sum()
         return over_range_punish.item()
