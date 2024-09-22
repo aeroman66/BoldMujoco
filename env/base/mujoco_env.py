@@ -302,3 +302,11 @@ class MujocoEnv(): # 疑问：这里写上的括号有任何作用吗
         self.data.qpos = qpos.tolist()
         self.data.qvel = qvel.tolist()
         mj.mj_forward(self.model, self.data) # 这个 forward 应该和 step 的功能不一样吧
+
+    def reset(self, return_info: bool = False):
+        mj.mj_resetData(self.model, self.data)
+        ob = self.reset_model()
+        if not return_info:
+            return ob
+        else:
+            return ob, {}

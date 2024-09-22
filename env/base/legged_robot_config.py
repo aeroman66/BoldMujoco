@@ -76,7 +76,7 @@ class LeggedRobotCfg(BaseConfig):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT # 疑问：通俗的来说是不是与控制频率挂钩，这个数越大代表你的控制频率越低
-        decimation = 4
+        decimation = 2
         kp = 0.6
         kv = 0.08
 
@@ -210,21 +210,22 @@ class LeggedRobotCfgPPO(BaseConfig):
         entropy_coef = 0.01
         num_learning_epochs = 5      # 疑问：这个 epoch 数是什么意思
         num_mini_batches = 4         # mini batch size = num_envs*nsteps / nminibatches
-        learning_rate = 1.e-3        #5.e-4
+        learning_rate = 1.e-3        # 5.e-4
         schedule = 'adaptive'        # could be adaptive, fixed 疑问：什么意思
         gamma = 0.99
         lam = 0.95
         desired_kl = 0.01
         max_grad_norm = 1.
+        empirical_normalization = False # 这个功能目前未知
 
     class runner:
         policy_class_name = 'ActorCritic'
         algorithm_class_name = 'PPO'
-        num_steps_per_env = 24       # per iteration 疑问：什么意思这个数字
+        num_steps_per_env = 5       # per iteration 疑问：什么意思这个数字
         max_iterations = 1500        # number of policy updates
 
         # logging
-        save_interval = 50           # check for potential saves every this many iterations
+        save_interval = 10          # check for potential saves every this many iterations
         experiment_name = 'test'
         run_name = ''
         # load and resume

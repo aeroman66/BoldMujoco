@@ -74,7 +74,7 @@ class PPO:
         self.transition.values = self.actor_critic.evaluate(critic_obs).detach()
         self.transition.actions_log_prob = self.actor_critic.get_actions_log_prob(self.transition.actions).detach()
         self.transition.action_mean = self.actor_critic.action_mean.detach()
-        self.transition.action_sigma = self.actor_critic.action_sigma.detach()
+        self.transition.action_sigma = self.actor_critic.action_std.detach()
         # need to record obs and critic_obs before env.step()
         self.transition.observations = obs
         self.transition.critic_observations = critic_obs
@@ -83,7 +83,7 @@ class PPO:
     def process_env_step(self, rewards, dones, infos):
         """处理环境步长
         """
-        self.tramsition.rewards = rewards.clone()
+        self.transition.rewards = rewards.clone()
         self.transition.dones = dones
         # Bootstrapping on time outs
         if "time_outs" in infos:
@@ -131,7 +131,7 @@ class PPO:
             actions_log_prob_batch = self.actor_critic.get_actions_log_prob(actions_batch)
             value_batch = self.actor_critic.evaluate(critic_obs_batch, masks=masks_batch, hid_states_batch=hid_states_batch[1])
             mu_batch = self.actor_critic.action_mean
-            sigma_batch = self.actor_critic.action_sigma
+            sigma_batch = self.actor_critic.action_std
             entropy_batch = self.actor_critic.entropy
 
             # KL

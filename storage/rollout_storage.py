@@ -11,7 +11,7 @@ sys.path.append(parent_dir)
 from utils import split_and_pad_trajectories
 import torch
 
-class RoaaoutStorage:
+class RolloutStorage:
     class Transition:
         def __init__(self):
             self.observations = None

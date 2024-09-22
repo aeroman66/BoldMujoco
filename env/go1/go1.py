@@ -18,7 +18,7 @@ from scipy.spatial.transform import Rotation as R
 from base import MujocoEnv
 from utils import *
 
-from go1_cfg import Go1Cfg
+from .go1_cfg import Go1Cfg
 from reward import Reward
 
 class WalkEnv(MujocoEnv):
@@ -348,7 +348,7 @@ class WalkEnv(MujocoEnv):
 
         self.set_state(qpos, qvel)
 
-        observation = self.get_observation()
+        observation = self.get_observations()
 
         return observation
     
