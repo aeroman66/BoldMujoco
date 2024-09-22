@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-fromtorch.distributions import Normal
+from torch.distributions import Normal
 
 class ActorCritic(nn.Module):
     is_recurrent = False
@@ -87,11 +87,26 @@ class ActorCritic(nn.Module):
         actions_mean = self.actor(obs) # 在推理模式下就不会进行探索的动作了
         return actions_mean
     
-    def evaluate(self, critic_obs, **kwargs)
+    def evaluate(self, critic_obs, **kwargs):
         """让 critic 网络进行评分
         """
         score = self.critic(critic_obs)
         return score
+    
+    @property
+    def action_mean(self):
+        return self.distribution.mean
+
+    @property
+    def action_std(self):
+        return self.distribution.stddev
+
+    @property
+    def entropy(self):
+        """对于正态分布，其熵的计算公式为：H = 0.5 * log(2πe * σ^2)，其中 σ 是标准差。
+        也就是我们选择的分布方式决定了算法会如何进行探索
+        """
+        return self.distribution.entropy().sum(dim=-1)
 
 # *******************************Ustensiles************************************************
 
