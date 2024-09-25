@@ -12,7 +12,6 @@ from env.base import LeggedRobotCfgPPO
 from utils import *
 from runner import OnPolicyRunner
 
-device = 'cpu'
 train_cfg = LeggedRobotCfgPPO()
 cfg = Go1Cfg()
 reward = Reward

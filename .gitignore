@@ -58,4 +58,4 @@ log/
 # other
 *.egg-info
 __pycache__
-.pt
+*.pt
